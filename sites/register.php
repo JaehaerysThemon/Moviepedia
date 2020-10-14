@@ -15,6 +15,57 @@
   <main><h1>
     Register
   </h1></main>
+
+  <div class="form-group">
+					<label for="username">Benutzername *</label>
+					<input type="text" name="username" class="form-control" id="username"
+						value=""
+						placeholder="capital- and lowercase letters, min 6 charachter. "
+						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
+						title="capital- and lowercase letters, min 6 charachter."
+						maxlength="30" 
+						required="true">
+				</div>
+
+        <div class="form-group">
+					<label for="username">Prename *</label>
+					<input type="text" name="prename" class="form-control" id="prename"
+						value=""
+						placeholder="Prename"
+						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
+						title="Prename"
+						maxlength="30" 
+						required="true">
+				</div>
+
+        <div class="form-group">
+					<label for="username">Name *</label>
+					<input type="text" name="name" class="form-control" id="nac"
+						value=""
+						placeholder="Name"
+						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
+						title="Name"
+						maxlength="30" 
+						required="true">
+				</div>
+
+        <div class="form-group">
+					<label for="password">Password *</label>
+					<input type="password" name="password" class="form-control" id="password"
+						placeholder="capital- and lowercase letters, numbers, specialsigns, min. 8 charachters. "
+						pattern="(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+						title="mindestens einen Gross-, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen, mindestens 8 Zeichen lang,keine Umlaute."
+						maxlength="255"
+						required="true">
+				</div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" name="email" class="form-control" id="email"
+            placeholder="Enter yout Email adress."
+            maxlength="100"
+            required="true">
+        </div>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
