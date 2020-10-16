@@ -10,6 +10,72 @@
 </head>
 <body>
   <?php
+  
+
+    
+
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+      echo "<pre>";
+      print_r($_POST);
+      echo "</pre>";
+      // username
+      if(isset($_POST['username'])){
+        //trim
+        $username = trim($_POST['username']);
+        
+        // prüfung benutzername
+        if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $username)){
+          $error .= "The username is not in the right format.<br />";
+        }
+      } else {
+        $error .= "Fill out a username.<br />";
+      }
+      // password
+      if(isset($_POST['password'])){
+        //trim
+        $password = trim($_POST['password']);
+        // passwort gültig?
+        if(empty($password) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $password)){
+          $error .= "The password is not in the right format.<br />";
+        }
+      } else {
+        $error .= "Fill out a password.<br />";
+      }
+      
+      // kein fehler
+      if(empty($error)){
+      
+        $query = "SELECT * FROM users WHERE username =?";
+        $stmt = $mysqli->prepare($query);
+        $stmt->bind_param('s', $username);
+        $stmt->execute();
+    
+        //get_result: bekommt resultat von statemant zurück
+        $result = $stmt->get_result();
+        print_r($result);
+        if($result->num_rows){
+          while ($row = $result->fetch_assoc()){
+            //überprüft ob Passswort übereinstimmt
+            //password_verify: $passwoerd wo man in loginpage eingegeben hat $row... das wo in datenbank steht(gehashed )
+            if(password_verify($password, $row['password'])){
+              session_start();
+    
+              $_SESSION['username'] = $username;
+              $_SESSION['logged_in'] = true;
+    
+              header('Location:./admin.php');
+    
+            }
+            else{
+              $error .= "Login is wrong";
+            }
+            $stmt->close();
+          }
+        }
+        
+    
+      }
+    }
     include('../components/header.php')
   ?>
   <main>
@@ -34,7 +100,7 @@
         <div class="form-group">
 					<label for="password">Password *</label>
 					<input type="password" name="password" class="form-control" id="password"
-						placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute"
+						placeholder="capital- and lowercase letters, numbers, special letters, min. 8 charachter"
 						pattern="(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
 						title="mindestens einen Gross-, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen, mindestens 8 Zeichen lang,keine Umlaute."
 						maxlength="255"

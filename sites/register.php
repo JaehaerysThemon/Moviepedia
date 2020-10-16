@@ -10,14 +10,85 @@
 </head>
 <body>
   <?php
-    include('../components/header.php')
+	
+
+	if ($_SERVER["REQUEST_METHOD"] == "POST"){
+		echo "<pre>";
+		print_r($_POST);
+		echo "</pre>";
+		// username
+		if(isset($_POST['username'])){
+			//trim
+			$username = trim($_POST['username']);
+			
+			// prüfung benutzername
+			if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $username)){
+				$error .= "The username is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a username.<br />";
+		}
+
+		if(isset($_POST['prename'])){
+			//trim
+			$username = trim($_POST['prename']);
+			
+			// prüfung benutzername
+			if(empty($prename) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $prename)){
+				$error .= "The prename is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a prename.<br />";
+		}
+
+		if(isset($_POST['name'])){
+			//trim
+			$username = trim($_POST['name']);
+			
+			// prüfung benutzername
+			if(empty($name) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $name)){
+				$error .= "The name is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a name.<br />";
+		}
+
+		if(isset($_POST['password'])){
+			//trim
+			$password = trim($_POST['password']);
+			// passwort gültig?
+			if(empty($password) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $password)){
+				$error .= "Das Passwort entspricht nicht dem geforderten Format.<br />";
+			}
+		} else {
+			$error .= "Geben Sie bitte das Passwort an.<br />";
+		}
+
+		if(isset($_POST['email'])){
+			//trim
+			$username = trim($_POST['email']);
+			
+			// prüfung benutzername
+			if(empty($email) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $email)){
+				$error .= "The email is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a email.<br />";
+		}
+
+
+
+
+	}
+include('../components/header.php')
+
     ?>
   <main><h1>
     Register
   </h1></main>
 
   <div class="form-group">
-					<label for="username">Benutzername *</label>
+					<label for="username">Username *</label>
 					<input type="text" name="username" class="form-control" id="username"
 						value=""
 						placeholder="capital- and lowercase letters, min 6 charachter. "
@@ -28,23 +99,23 @@
 				</div>
 
         <div class="form-group">
-					<label for="username">Prename *</label>
+					<label for="prename">Prename *</label>
 					<input type="text" name="prename" class="form-control" id="prename"
 						value=""
-						placeholder="Prename"
+						placeholder="prename"
 						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
-						title="Prename"
+						title="prename"
 						maxlength="30" 
 						required="true">
 				</div>
 
         <div class="form-group">
-					<label for="username">Name *</label>
-					<input type="text" name="name" class="form-control" id="nac"
+					<label for="name">Name *</label>
+					<input type="text" name="name" class="form-control" id="name"
 						value=""
-						placeholder="Name"
+						placeholder="name"
 						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
-						title="Name"
+						title="name"
 						maxlength="30" 
 						required="true">
 				</div>
