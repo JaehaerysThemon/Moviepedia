@@ -1,3 +1,87 @@
+<?php
+include("../include/dbconnector.inc.php");
+include("../include/session.inc.php");
+$error="";
+//"" damit es variabeln auf null setzt
+$username=$firstname=$lastname=$email=$password=$moderator="";
+	if ($_SERVER["REQUEST_METHOD"] == "POST"){
+		echo "<pre>";
+		print_r($_POST);
+		echo "</pre>";
+		// username
+		if(isset($_POST['username'])){
+			//trim
+			$username = trim($_POST['username']);
+			
+			// prüfung benutzername
+			if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,30}/", $username)){
+				$error .= "The username is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a username.<br />";
+		}
+
+		if(isset($_POST['firstname'])){
+			//trim
+			$firstname = trim($_POST['firstname']);
+			
+			// prüfung benutzername
+			if(empty($firstname) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,30}/", $firstname)){
+				$error .= "The firstname is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a firstname.<br />";
+		}
+
+		if(isset($_POST['lastname'])){
+			//trim
+			$lastname = trim($_POST['lastname']);
+			
+			// prüfung benutzername
+			if(empty($lastname) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,30}/", $lastname)){
+				$error .= "The lastname is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a lastname.<br />";
+		}
+
+		if(isset($_POST['password'])){
+			//trim
+			$password = trim($_POST['password']);
+			// passwort gültig?
+			if(empty($password) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $password)){
+				$error .= "Das Passwort entspricht nicht dem geforderten Format.<br />";
+			}
+		} else {
+			$error .= "write your password.<br />";
+		}
+
+		if(isset($_POST['email'])){
+			//trim
+			$email = trim($_POST['email']);
+			
+			// prüfung benutzername
+			if(empty($email) || strlen($email)>100){
+				$error .= "The email is not in the right format.<br />";
+			}
+		} else {
+			$error .= "Fill out a email.<br />";
+		}
+		$moderator=false;
+		$password=password_hash($password, PASSWORD_BCRYPT);
+		if(empty($error)){
+      
+			$query = "INSERT INTO USERS (username, firstname,lastname, email, password, moderator) VALUE (?,?,?,?,?,?)"; 
+			$stmt = $mysqli->prepare($query);
+			$stmt->bind_param('sssssi', $username, $firstname, $lastname, $email, $password, $moderator);
+			$stmt->execute();
+		
+			
+				$stmt->close();
+			  }
+			}
+		
+	?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,111 +93,48 @@
   <title>Moviepedia</title>
 </head>
 <body>
-  <?php
-	
-
-	if ($_SERVER["REQUEST_METHOD"] == "POST"){
-		echo "<pre>";
-		print_r($_POST);
-		echo "</pre>";
-		// username
-		if(isset($_POST['username'])){
-			//trim
-			$username = trim($_POST['username']);
-			
-			// prüfung benutzername
-			if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $username)){
-				$error .= "The username is not in the right format.<br />";
-			}
-		} else {
-			$error .= "Fill out a username.<br />";
-		}
-
-		if(isset($_POST['prename'])){
-			//trim
-			$username = trim($_POST['prename']);
-			
-			// prüfung benutzername
-			if(empty($prename) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $prename)){
-				$error .= "The prename is not in the right format.<br />";
-			}
-		} else {
-			$error .= "Fill out a prename.<br />";
-		}
-
-		if(isset($_POST['name'])){
-			//trim
-			$username = trim($_POST['name']);
-			
-			// prüfung benutzername
-			if(empty($name) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $name)){
-				$error .= "The name is not in the right format.<br />";
-			}
-		} else {
-			$error .= "Fill out a name.<br />";
-		}
-
-		if(isset($_POST['password'])){
-			//trim
-			$password = trim($_POST['password']);
-			// passwort gültig?
-			if(empty($password) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $password)){
-				$error .= "Das Passwort entspricht nicht dem geforderten Format.<br />";
-			}
-		} else {
-			$error .= "Geben Sie bitte das Passwort an.<br />";
-		}
-
-		if(isset($_POST['email'])){
-			//trim
-			$username = trim($_POST['email']);
-			
-			// prüfung benutzername
-			if(empty($email) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $email)){
-				$error .= "The email is not in the right format.<br />";
-			}
-		} else {
-			$error .= "Fill out a email.<br />";
-		}
-
-
-
-
-	}
+  
+	<?php
 include('../components/header.php')
 
     ?>
   <main><h1>
     Register
-  </h1></main>
+  </h1>
+  <?php
+  if(strlen($error)){
+	  echo "<div class='alert alert-danger' role='alert' > ". $error." </div>";
+  }
+  ?>
+  <form action="./register.php" method="post">
 
   <div class="form-group">
 					<label for="username">Username *</label>
 					<input type="text" name="username" class="form-control" id="username"
 						value=""
+						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,}"
 						placeholder="capital- and lowercase letters, min 6 charachter. "
-						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
 						title="capital- and lowercase letters, min 6 charachter."
 						maxlength="30" 
 						required="true">
 				</div>
 
         <div class="form-group">
-					<label for="prename">Prename *</label>
-					<input type="text" name="prename" class="form-control" id="prename"
+					<label for="firstname">firstname *</label>
+					<input type="text" name="firstname" class="form-control" id="firstname"
 						value=""
-						placeholder="prename"
-						title="prename"
+						placeholder="firstname"
+						title="firstname"
 						maxlength="30" 
 						required="true">
 				</div>
 
         <div class="form-group">
-					<label for="name">Name *</label>
-					<input type="text" name="name" class="form-control" id="name"
+					<label for="lastname">Lastname *</label>
+					<input type="text" name="lastname" class="form-control" id="lastname"
 						value=""
-						placeholder="name"			
-						title="name"
+						placeholder="lastname"			
+						title="lastname"
 						maxlength="30" 
 						required="true">
 				</div>
@@ -135,9 +156,10 @@ include('../components/header.php')
             maxlength="100"
             required="true">
         </div>
-
+		
 		<button type="submit" name="button" value="submit" class="btn btn-info">Register</button>
-
+		</form>
+		</main>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>

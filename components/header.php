@@ -1,6 +1,6 @@
 <?php
-  include('../include/session.inc.php');
-  logIn("Leon", true);
+
+  
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
   <a class="navbar-brand" href="../sites/home.php">Moviepedia</a>

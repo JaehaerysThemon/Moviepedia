@@ -2,7 +2,7 @@
   session_start();
   session_regenerate_id(true);
 
-  function login($username, $mod) {
+  function loginUser($username, $mod) {
     $_SESSION['username'] = $username;
     $_SESSION['mod'] = $mod;
   }
