@@ -107,5 +107,8 @@
 						required="true">
 				</div>
 
+        <button type="submit" name="button" value="submit" class="btn btn-info">Login</button>
+
+
 </body>
 </html>

@@ -103,7 +103,6 @@ include('../components/header.php')
 					<input type="text" name="prename" class="form-control" id="prename"
 						value=""
 						placeholder="prename"
-						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
 						title="prename"
 						maxlength="30" 
 						required="true">
@@ -113,8 +112,7 @@ include('../components/header.php')
 					<label for="name">Name *</label>
 					<input type="text" name="name" class="form-control" id="name"
 						value=""
-						placeholder="name"
-						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,}"
+						placeholder="name"			
 						title="name"
 						maxlength="30" 
 						required="true">
@@ -125,7 +123,7 @@ include('../components/header.php')
 					<input type="password" name="password" class="form-control" id="password"
 						placeholder="capital- and lowercase letters, numbers, specialsigns, min. 8 charachters. "
 						pattern="(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
-						title="mindestens einen Gross-, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen, mindestens 8 Zeichen lang,keine Umlaute."
+						title="capital- and lowercase letters, numbers, specialsigns, min. 8 charachters."
 						maxlength="255"
 						required="true">
 				</div>
@@ -137,6 +135,9 @@ include('../components/header.php')
             maxlength="100"
             required="true">
         </div>
+
+		<button type="submit" name="button" value="submit" class="btn btn-info">Register</button>
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
