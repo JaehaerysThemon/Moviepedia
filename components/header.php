@@ -1,5 +1,5 @@
 <?php
-
+include("../include/session.inc.php")
   
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
@@ -17,7 +17,7 @@
             </li>';
         }
         $tabs.='<li class="nav-item active">
-          <a class="nav-link" href="../sites/logout.php">Account<span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="../sites/account.php">Account<span class="sr-only">(current)</span></a>
           </li>';
         echo $tabs;
       } else {
