@@ -1,6 +1,35 @@
 <?php
-include("../include/dbconnector.inc.php");
-include("../include/session.inc.php");
+  include("../include/session.inc.php");
+  include("../include/dbconnector.inc.php");
+  
+  $error = '';
+  $content = '';
+  if(!isLoggedIn()){
+    header('Location:./login.php');
+  }
+
+  if($_SERVER['REQUEST_METHOD'] == "POST"){
+    echo "<pre>";
+    print_r($_POST);
+    echo "</pre>";
+
+  // content is set, min 80 Chars long
+  if(isset($_POST['content']) &&  strlen(trim($_POST['content'])) >= 80){
+    // escape spezial chars -> prohibit Script incection
+    $content = htmlspecialchars(trim($_POST['content']));
+  } else {
+    $error .= "Please Enter a Valid Text.<br />";
+  }
+  if(empty($error)){
+    $approved = false;
+    $id = $_SESSION['id'];
+    $query = "INSERT INTO PAGES (title, text, approved, author) VALUE (?,?,?,?)"; 
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('ssii', $title, $content, $approved, $id);
+    $stmt->execute();
+    $stmt->close();
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,40 +75,30 @@ include("../include/session.inc.php");
   </div>
 </nav>
   <main>
-    <h1>Account</h1>
-<?php
-if(isLoggedIn()){
-  //holt username von session
-  $username=$_SESSION["username"];
-  $query = "SELECT * FROM users WHERE username =?";
-        $stmt = $mysqli->prepare($query);
-        $stmt->bind_param('s', $username);
-        $stmt->execute();
-    
-        //get_result: bekommt resultat von statemant zurück
-        $result = $stmt->get_result();
-       
-        if($result->num_rows){
-          while ($user = $result->fetch_assoc()){
-            echo("<div>
-            
-            <div> Username: ".$user["username"]."</div>"
-            ."<div> Firstname: ".$user["firstname"]."</div>"
-            ."<div> Lastname: ".$user["lastname"]."</div>"
-            ."<div>Email: ".$user["email"]."</div>"
-            ."<div> Moderator: ".$user["moderator"]."</div>".
-            "</div>");
-            echo("<a href='./editPassword.php' class='btn btn-dark'> Change Password </a>");
-            echo("<a href='./logout.php' class='btn btn-dark'>logout</a>" );
-            $stmt->close();
-          }
+    <h1>Create</h1>
+    <div class="container">
+      <?php
+        if(!empty($error)){
+          echo "<div class='alert alert-danger' role='alert'>" . $error . "</div>";
         }
-}else{
-  header("Location:./login.php");
-}
-
-?>
-
+      ?>
+      <form action="./create.php" method="post">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" name="title" class="form-control" id="title"
+                  value="<?php echo $title ?>"
+                  placeholder="Enter a Title"
+                  maxlength="60"
+                  required="true">
+        </div>
+        <div class="form-group">
+          <label for="content">Content</label>
+          <textarea class="form-control" name="content" id="content" cols="70" minlength="80" rows="8" required><?php echo $content?></textarea>
+        </div>
+        
+        <button type="submit" name="button" value="submit" class="btn btn-dark btn-outline">Senden</button>
+      </form>
+    </div>
 
 
   </main>

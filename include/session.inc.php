@@ -2,9 +2,10 @@
   session_start();
   session_regenerate_id(true);
 
-  function loginUser($username, $mod) {
+  function loginUser($username, $mod, $id) {
     $_SESSION['username'] = $username;
     $_SESSION['mod'] = $mod;
+    $_SESSION['id'] = $id;
   }
 
   function isLoggedIn() {

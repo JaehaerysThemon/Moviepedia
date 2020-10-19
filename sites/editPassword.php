@@ -2,9 +2,8 @@
 include("../include/dbconnector.inc.php");
 include("../include/session.inc.php");
 $error="";
-$username = $password="";
+$username = $oldPassword=$newPassword="";
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-
       // username
       if(isset($_POST['username'])){
         //trim
@@ -17,42 +16,59 @@ $username = $password="";
       } else {
         $error .= "Fill out a username.<br />";
       }
-      // password
-      if(isset($_POST['password'])){
+      // oldPassword
+      if(isset($_POST['oldPassword'])){
         //trim
-        $password = trim($_POST['password']);
+        $oldPassword = trim($_POST['oldPassword']);
         // passwort gültig?
-        if(empty($password) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $password)){
-          $error .= "The password is not in the right format.<br />";
+        if(empty($oldPassword) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $oldPassword)){
+          $error .= "The old password is not in the right format.<br />";
         }
       } else {
-        $error .= "Fill out a password.<br />";
+        $error .= "Fill out your current password.<br />";
+      }
+
+      // newPassword
+      if(isset($_POST['newPassword'])){
+        //trim
+        $newPassword = trim($_POST['newPassword']);
+        // passwort gültig?
+        if(empty($oldPassword) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $newPassword)){
+          $error .= "The new password is not in the right format.<br />";
+        }
+      } else {
+        $error .= "Fill out new password.<br />";
       }
       
       // kein fehler
       if(empty($error)){
       
         $query = "SELECT * FROM users WHERE username =?";
-        $stmt = $mysqli->prepare($query);
-        $stmt->bind_param('s', $username);
-        $stmt->execute();
+        $loginstmt = $mysqli->prepare($query);
+        $loginstmt->bind_param('s', $username);
+        $loginstmt->execute();
     
         //get_result: bekommt resultat von statemant zurück
-        $result = $stmt->get_result();
+        $result = $loginstmt->get_result();
+        print_r($result);
         if($result->num_rows){
           while ($row = $result->fetch_assoc()){
             //überprüft ob Passswort übereinstimmt
             //password_verify: $passwoerd wo man in loginpage eingegeben hat $row... das wo in datenbank steht(gehashed )
-            if(password_verify($password, $row['password'])){
-              
-              loginUser($username, $row["moderator"], $row['id']);
-              header('Location:./home.php');
-    
+            if(password_verify($oldPassword, $row['password'])){
+                $loginstmt->close();
+                $changeQuery = "UPDATE users SET password=?";
+                $newPassword=password_hash($newPassword, PASSWORD_BCRYPT);
+                $changestmt = $mysqli->prepare($changeQuery);
+                $changestmt->bind_param('s', $newPassword);
+                $changestmt->execute();
+                $changestmt->close();
+                header("Location:./account.php");
             }
             else{
               $error .= "Login is wrong";
             }
-            $stmt->close();
+            
           }
         }
       }
@@ -98,13 +114,13 @@ $username = $password="";
   </div>
 </nav>
   <main>
-    <h1>Log In</h1>
+    <h1>Change Password</h1>
     <?php
         if(!empty($error)){
           echo "<div class='alert alert-danger' role='alert'>" . $error . "</div>";
         }
       ?>
-    <form action="./login.php" method="post">
+    <form action="./editPassword.php" method="post">
   <div class="form-group">
 					<label for="username">Username</label>
 					<input type="text" name="username" class="form-control" id="username"
@@ -116,8 +132,8 @@ $username = $password="";
 				</div>
 
         <div class="form-group">
-					<label for="password">Password</label>
-					<input type="password" name="password" class="form-control" id="password"
+					<label for="oldPassword">Old Password</label>
+					<input type="password" name="oldPassword" class="form-control" id="oldPassword"
 						placeholder="capital- and lowercase letters, numbers, special letters, min. 8 charachter"
 						pattern="(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
 						title="mindestens einen Gross-, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen, mindestens 8 Zeichen lang,keine Umlaute."
@@ -125,9 +141,18 @@ $username = $password="";
 						required="true">
 				</div>
 
-        <button type="submit" name="button" value="submit" class="btn btn-info">Login</button>
+        <div class="form-group">
+					<label for="newPassword">New Password</label>
+					<input type="password" name="newPassword" class="form-control" id="newPassword"
+						placeholder="capital- and lowercase letters, numbers, special letters, min. 8 charachter"
+						pattern="(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+						title="mindestens einen Gross-, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen, mindestens 8 Zeichen lang,keine Umlaute."
+						maxlength="255"
+						required="true">
+				</div>
+
+        <button type="submit" name="button" value="submit" class="btn btn-info">Change Password</button>
 </form>
-<a href="./register.php">you don't have a account? Click here to create one.</a>
   </main>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>

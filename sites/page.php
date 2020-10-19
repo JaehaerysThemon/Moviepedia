@@ -1,6 +1,29 @@
-<?php
-include("../include/dbconnector.inc.php");
+<?php 
 include("../include/session.inc.php");
+include("../include/dbconnector.inc.php");
+
+$page = "";
+
+if($_SERVER["REQUEST_METHOD"] == "GET"){
+  $query = "SELECT * FROM pages WHERE id = ?"; 
+  $id = $_GET['id'];
+  $stmt = $mysqli->prepare($query);
+  $stmt->bind_param('i', $id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  if($result->num_rows){
+    while ($row = $result->fetch_assoc()){
+      $page = $row;
+    }
+  }
+  $stmt->close();
+  if(!$page['approved']){
+    header("Location:./home.php");
+  }
+} else{
+  header("Location:./home.php");
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,49 +62,22 @@ include("../include/session.inc.php");
 
       ?>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
   </div>
 </nav>
   <main>
-    <h1>Account</h1>
-<?php
-if(isLoggedIn()){
-  //holt username von session
-  $username=$_SESSION["username"];
-  $query = "SELECT * FROM users WHERE username =?";
-        $stmt = $mysqli->prepare($query);
-        $stmt->bind_param('s', $username);
-        $stmt->execute();
-    
-        //get_result: bekommt resultat von statemant zurück
-        $result = $stmt->get_result();
-       
-        if($result->num_rows){
-          while ($user = $result->fetch_assoc()){
-            echo("<div>
-            
-            <div> Username: ".$user["username"]."</div>"
-            ."<div> Firstname: ".$user["firstname"]."</div>"
-            ."<div> Lastname: ".$user["lastname"]."</div>"
-            ."<div>Email: ".$user["email"]."</div>"
-            ."<div> Moderator: ".$user["moderator"]."</div>".
-            "</div>");
-            echo("<a href='./editPassword.php' class='btn btn-dark'> Change Password </a>");
-            echo("<a href='./logout.php' class='btn btn-dark'>logout</a>" );
-            $stmt->close();
-          }
+      <div class="container p-3">
+      <h1>
+        <?php echo $page['title']; ?>
+      </h1>
+      <p class="text-break"> <?php echo $page['text']; ?> </p>
+      <a class='btn btn-outline-dark' href='./edit.php?id=<?php echo $page["id"]; ?>'> Edit </a>
+      <?php 
+        if(isMod()){
+          echo "<a class='btn btn-danger' href='./delete.php?id=".$page["id"]."'?> Delete </a>";
+        
         }
-}else{
-  header("Location:./login.php");
-}
-
-?>
-
-
-
+      ?>
+      </div>
   </main>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>

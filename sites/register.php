@@ -5,13 +5,10 @@ $error="";
 //"" damit es variabeln auf null setzt
 $username=$firstname=$lastname=$email=$password=$moderator="";
 	if ($_SERVER["REQUEST_METHOD"] == "POST"){
-		echo "<pre>";
-		print_r($_POST);
-		echo "</pre>";
 		// username
 		if(isset($_POST['username'])){
 			//trim
-			$username = trim($_POST['username']);
+			$username = htmlspecialchars(trim($_POST['username']));
 			
 			// prüfung benutzername
 			if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,30}/", $username)){
@@ -23,7 +20,7 @@ $username=$firstname=$lastname=$email=$password=$moderator="";
 
 		if(isset($_POST['firstname'])){
 			//trim
-			$firstname = trim($_POST['firstname']);
+			$firstname = htmlspecialchars(trim($_POST['firstname']));
 			
 			// prüfung benutzername
 			if(empty($firstname) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,30}/", $firstname)){
@@ -35,7 +32,7 @@ $username=$firstname=$lastname=$email=$password=$moderator="";
 
 		if(isset($_POST['lastname'])){
 			//trim
-			$lastname = trim($_POST['lastname']);
+			$lastname = htmlspecialchars(trim($_POST['lastname']));
 			
 			// prüfung benutzername
 			if(empty($lastname) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,30}/", $lastname)){
@@ -58,7 +55,7 @@ $username=$firstname=$lastname=$email=$password=$moderator="";
 
 		if(isset($_POST['email'])){
 			//trim
-			$email = trim($_POST['email']);
+			$email = htmlspecialchars(trim($_POST['email']));
 			
 			// prüfung benutzername
 			if(empty($email) || strlen($email)>100){
@@ -75,10 +72,9 @@ $username=$firstname=$lastname=$email=$password=$moderator="";
 			$stmt = $mysqli->prepare($query);
 			$stmt->bind_param('sssssi', $username, $firstname, $lastname, $email, $password, $moderator);
 			$stmt->execute();
-		loginUser($username, false);
 			
 				$stmt->close();
-				header('Location:./home.php');
+				header('Location:./login.php');
 			  }
 			}
 		
@@ -118,13 +114,8 @@ $username=$firstname=$lastname=$email=$password=$moderator="";
         <a class="nav-link" href="../sites/login.php">Log In <span class="sr-only">(current)</span></a>
         </li>');
       }
-
       ?>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
   </div>
 </nav>
   <main><h1>
