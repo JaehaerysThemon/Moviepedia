@@ -73,7 +73,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
       <a class='btn btn-outline-dark' href='./edit.php?id=<?php echo $page["id"]; ?>'> Edit </a>
       <?php 
         if(isMod()){
-          echo "<a class='btn btn-danger' href='./delete.php?id=".$page["id"]."'?> Delete </a>";
+          echo "<a class='btn btn-danger' href='./delete.php?id=". $page["id"]."'?> Delete </a>";
         
         }
       ?>

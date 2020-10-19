@@ -3,11 +3,28 @@
   include("../include/dbconnector.inc.php");
   
   $error = '';
-  $content = '';
   if(!isLoggedIn()){
     header('Location:./login.php');
   }
-
+  if($_SERVER["REQUEST_METHOD"] == "GET"){
+    $oldQuery = "SELECT * FROM pages WHERE id = ?"; 
+    $id = $_GET['id'];
+    $oldStmt = $mysqli->prepare($query);
+    $oldStmt->bind_param('i', $id);
+    $oldStmt->execute();
+    $result = $oldStmt->get_result();
+    if($result->num_rows){
+      while ($row = $result->fetch_assoc()){
+        if(!$row['approved']){
+          header('Location:./home.php');
+        }
+        $title = $row['title'];
+        $content = $row['text'];
+      }
+    }
+    $oldStmt->close();
+  
+  
   if($_SERVER['REQUEST_METHOD'] == "POST"){
     echo "<pre>";
     print_r($_POST);
@@ -22,10 +39,10 @@
   }
   if(empty($error)){
     $approved = false;
-    $id = $_SESSION['id'];
-    $query = "INSERT INTO PAGES (title, text, approved, author) VALUE (?,?,?,?)"; 
+    $userId = $_SESSION['id'];
+    $query = "INSERT INTO PAGES (title, text, approved, author, parent) VALUE (?,?,?,?,?)"; 
     $stmt = $mysqli->prepare($query);
-    $stmt->bind_param('ssii', $title, $content, $approved, $id);
+    $stmt->bind_param('ssiii', $title, $content, $approved, $userId, $id);
     $stmt->execute();
     $stmt->close();
   }
@@ -75,28 +92,20 @@
   </div>
 </nav>
   <main>
-    <h1>Create</h1>
+    <h1><?php echo $title ?></h1>
     <div class="container">
       <?php
         if(!empty($error)){
           echo "<div class='alert alert-danger' role='alert'>" . $error . "</div>";
         }
       ?>
-      <form action="./create.php" method="post">
-        <div class="form-group">
-          <label for="title">Title</label>
-          <input type="text" name="title" class="form-control" id="title"
-                  value="<?php echo $title ?>"
-                  placeholder="Enter a Title"
-                  maxlength="60"
-                  required="true">
-        </div>
+      <form action="./edit.php" method="post">
         <div class="form-group">
           <label for="content">Content</label>
           <textarea class="form-control" name="content" id="content" cols="70" minlength="80" rows="8" required><?php echo $content?></textarea>
         </div>
         
-        <button type="submit" name="button" value="submit" class="btn btn-dark btn-outline">Senden</button>
+        <button type="submit" name="button" value="submit" class="btn btn-dark btn-outline">Update</button>
       </form>
     </div>
 

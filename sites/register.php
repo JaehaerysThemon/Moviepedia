@@ -64,7 +64,11 @@ $username=$firstname=$lastname=$email=$password=$moderator="";
 		} else {
 			$error .= "Fill out a email.<br />";
 		}
-		$moderator=false;
+		if(isset($_POST['mod'])){
+			$moderator=true;
+		} else {
+			$moderator=false;
+		}
 		$password=password_hash($password, PASSWORD_BCRYPT);
 		if(empty($error)){
       
@@ -176,6 +180,9 @@ $username=$firstname=$lastname=$email=$password=$moderator="";
             maxlength="100"
             required="true">
         </div>
+          <label for="mod">Moderator *</label>
+          <input type="checkbox" name="mod" class="form-control" id="mod">
+
 		
 		<button type="submit" name="button" value="submit" class="btn btn-info">Register</button>
 		</form>

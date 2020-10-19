@@ -29,7 +29,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     $error .= "Please Enter a Valid Text.<br />";
   }
   if(empty($error)){
-    $approved = false;
+    $approved = true;
     $id = $_SESSION['id'];
     $query = "INSERT INTO PAGES (title, text, approved, author) VALUE (?,?,?,?)"; 
     $stmt = $mysqli->prepare($query);

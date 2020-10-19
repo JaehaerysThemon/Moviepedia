@@ -57,10 +57,11 @@ $username = $oldPassword=$newPassword="";
             //password_verify: $passwoerd wo man in loginpage eingegeben hat $row... das wo in datenbank steht(gehashed )
             if(password_verify($oldPassword, $row['password'])){
                 $loginstmt->close();
-                $changeQuery = "UPDATE users SET password=?";
+                $id = $_SESSION['id']
+                $changeQuery = "UPDATE users SET password=? WHERE id = ?";
                 $newPassword=password_hash($newPassword, PASSWORD_BCRYPT);
                 $changestmt = $mysqli->prepare($changeQuery);
-                $changestmt->bind_param('s', $newPassword);
+                $changestmt->bind_param('si', $newPassword, $id);
                 $changestmt->execute();
                 $changestmt->close();
                 header("Location:./account.php");
