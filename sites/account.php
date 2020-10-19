@@ -61,7 +61,15 @@ if(isLoggedIn()){
        
         if($result->num_rows){
           while ($user = $result->fetch_assoc()){
-            echo("<div>".$user["username"].$user["firstname"].$user["lastname"].$user["email"].$user["moderator"]."</div>");
+            echo("<div>
+            
+            <div> Username: ".$user["username"]."</div>"
+            ."<div> Firstname: ".$user["firstname"]."</div>"
+            ."<div> Lastname: ".$user["lastname"]."</div>"
+            ."<div>Email: ".$user["email"]."</div>"
+            ."<div>".$user["moderator"]."</div>".
+            "</div>");
+
             echo("<a href='./logout.php'>logout</a>" );
             $stmt->close();
           }
