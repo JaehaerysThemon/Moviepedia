@@ -9,9 +9,6 @@
   }
 
 if($_SERVER['REQUEST_METHOD'] == "POST"){
-  echo "<pre>";
-  print_r($_POST);
-  echo "</pre>";
 
   // title is set, min 1 + max 60 chars long
   if(isset($_POST['title']) && !empty(trim($_POST['title'])) && strlen(trim($_POST['title'])) <= 60){
@@ -36,6 +33,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     $stmt->bind_param('ssii', $title, $content, $approved, $id);
     $stmt->execute();
     $stmt->close();
+    header('Location:./home.php');
   }
 }
 ?>
